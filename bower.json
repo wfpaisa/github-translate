@@ -1,0 +1,24 @@
+{
+  "name": "wgulp",
+  "description": "",
+  "main": "webpack.config.js",
+  "authors": [
+    "Felipe Uribe <wfpaisa@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/wfpaisa/gulp-webpack",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "simplemde": "^1.10.0",
+    "jsdiff": "^2.2.1",
+    "jquery": "^2.2.1",
+    "highlight": "^9.2.0"
+  }
+}
