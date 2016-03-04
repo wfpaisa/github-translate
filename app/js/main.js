@@ -64,7 +64,7 @@ $(function() {
             url: url1,
             method: "GET"
         }).done(function(data) {
-            
+
             // Lleno el editor
             simplemde.value(data);
 
@@ -78,15 +78,17 @@ $(function() {
 
     // Compara
     var p2 = new Promise(function(resolve, reject) {
-        
+
         p1.then(function(val) {
 
             var url2 = `https://api.github.com/repos/${fork}/commits?path=${filePath}&sha=${branch}`
 
             $.get(url2, function(data) {
 
-                console.log(data[0].commit.message)
-                resolve(data[0]);
+                console.log( data[0].commit.message )
+                
+                resolve( data[0] );
+
             });
 
         }, function(err) {
@@ -127,9 +129,14 @@ $(function() {
 // acept: application/vnd.github.v3.raw
 // acept: application/vnd.github.v3.json
 
-// Retorna el contenido de un archivo
+// Retorna el contenido de un archivo, ejemplos
+// retorna el contenido del archivo de la rama es
 // https://api.github.com/repos/wfpaisa/sails-docs/contents/concepts/Assets/DefaultTasks.md?ref=es
 // https://api.github.com/repos/wfpaisa/sails-docs/concepts/Assets/TaskAutomation.md?ref=es"
+
+// este consulta de este commit: 73f0b053ff4636f0d5c6d8ca06dc2cd652264fe4 el archivo configuration
+// https://api.github.com/repos/wfpaisa/sails-docs/contents/concepts/Configuration/Configuration.md?ref=73f0b053ff4636f0d5c6d8ca06dc2cd652264fe4 
+
 
 // Retorna el  historico de un archivo
 // https://api.github.com/repos/wfpaisa/sails-docs/commits?path=concepts/Assets/TaskAutomation.md&sha=es
@@ -141,6 +148,9 @@ $(function() {
 // tree
 // https://api.github.com/repos/wfpaisa/sails-docs/git/commits/e73f0810397fe1a131940456034d456880f23dbb
 // https://api.github.com/repos/wfpaisa/sails-docs/git/trees/85ea943fcb2fb8c91d2a07dcbd4966c1bf9b1ae3?recursive=1
+
+// Retorna el contenido de un archivo segun su sha
+// https://api.github.com/repos/wfpaisa/sails-docs/git/blobs/5574d99ab399479327b1ab65dadc0c1191f3eac6
 
 
 
