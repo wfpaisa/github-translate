@@ -22,13 +22,23 @@
 
 
 /* Header */
-	#main-header{background:#E3EFEF; line-height:48px; height:48px; right:0px; position:absolute; width:200px; z-index:100; }
+	#page-header{background:#143343; color:#CEE4F3; line-height:48px; height:48px; right:0px; width:100%; position:absolute; padding:0px 10px; z-index:8; }
+	#page-header ul{ list-style:none; padding:0px; margin:0px; }
+	#page-header ul li{display:inline-block; padding:0 5px; cursor:pointer;}
+
+/* Tree */
+	#tree{background:#FFF; display:none; font-size:90%; height:100%; top:0px; left:0px; width:300px; box-shadow:0px 0px 6px 2px rgba(0,0,0,0.4); position:absolute; z-index:102;}
+	#tree ul{background:#FDFDFD; list-style:none; padding:15px 10px; margin-top:50px; border-bottom:1px dashed #B4D2E2; border-top:1px dashed #B4D2E2; }
+	#tree ul li{cursor:pointer; color:#416C7F; margin:3px 0px;}
+	#tree ul li:hover{color:#4B99A2;}
+	#tree ul li .file-blank{float:left; height:5px; width:17px;}
+	#tree #tree-close{background:red; border-radius:50%; color:#FFF; cursor:pointer; position:absolute; top:5px; right:5px; line-height:20px; height:20px; text-align:center; width:20px;}
 
 /* Cuerpo */
-	#main{display:block; padding-top:0px; height:100%; }
+	#main{display:block; padding-top:48px; height:100%; overflow:hidden;}
 	
 
-	#main #edit{float:left; height:100%; position:relative; width:50%; }
+	#main #edit{float:left; height:100%; position:relative; width:50%; overflow:hidden; }
 	#main textarea#editor{float:left; border:none; background:none; resize:none; height:100%; padding:48px 50px; width:100%; font-size:15px; line-height:1.6em; font-weight:400; color:#001c20; }
 	
 	/* Markdow */
@@ -61,9 +71,8 @@
 	#editor li code{font-family:Monaco,courier,monospace; font-style:normal; background:rgba(11,143,162,.15); padding:2px 4px; font-size:13px; margin:0 2px; }
 	
 	.CodeMirror,
-	.editor-preview{height:100%; border:none; padding:50px 20px 40px 20px; }
-	.editor-toolbar{background:#FFF; position:fixed; top:0px; left:0px; width:50%; z-index:9; border:none; border-bottom:1px solid #eee; }
-	.editor-statusbar{background:#FFF; position:fixed; bottom:0px; left:0px; width:50%; z-index:9; border-top:1px solid #eee; }
+	.editor-preview{height:calc(100% - 82px); border:none; border-radius:0px; padding:0px 15px;}
+	.editor-toolbar{border-bottom:1px solid #eee; border-right:none;}
 
 
 	#main #diff{background:#FFF; border-left:1px solid #DDE9F3; float:left; height:100%; padding:48px 50px; overflow:scroll; white-space:pre-wrap; width:50%; }
@@ -71,6 +80,8 @@
 	#main #diff .red{background:#F57890; color:#FFF; }
 	#main #diff .red{background:#F5BCC7; }
 	#main #diff .gray{}
+
+
 
 /*section#main{height:100%; }*/
 /*article{background:#FFF; float:left;  margin:1%; width:48%; box-shadow:0px 0px 6px 2px rgba(0,0,0,0.2); }*/
