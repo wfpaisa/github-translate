@@ -28,11 +28,13 @@
 
 /* Tree */
 	#tree{background:#FFF; font-size:90%; height:100%; top:0px; left:0px; box-shadow:0px 0px 6px 2px rgba(0,0,0,0.4); position:absolute; overflow-y:scroll; width:300px; z-index:102;}
-	#tree-content{background:#FDFDFD; list-style:none; padding:15px 10px; margin-top:50px; border-bottom:1px dashed #B4D2E2; border-top:1px dashed #B4D2E2; }
-	#tree-content li{cursor:pointer; color:#416C7F; margin:3px 0px;}
-	#tree-content li:hover{color:#4B99A2;}
-	#tree-content li .file-blank{float:left; height:5px; width:17px;}
 	#tree #tree-close{background:red; border-radius:50%; color:#FFF; cursor:pointer; position:absolute; top:5px; right:5px; line-height:20px; height:20px; text-align:center; width:20px;}
+	
+	.treelist{background:#FDFDFD; list-style:none; padding:15px 10px; margin-top:50px; border-bottom:1px dashed #B4D2E2; border-top:1px dashed #B4D2E2; }
+	.treelist li{cursor:pointer; color:#416C7F; margin:3px 0px;}
+	.treelist li:hover{color:#4B99A2;}
+	.treelist li .file-blank{float:left; height:5px; width:17px;}
+
 
 /* Cuerpo */
 	#main{display:block; padding-top:48px; height:100%; overflow:hidden;}

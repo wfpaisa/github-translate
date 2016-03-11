@@ -17,7 +17,7 @@ var branch = 'es-ES';
 // Ruta del directorio activo
 var treePath = {};
 
-treePath.actualpath = '';
+treePath.actualpath = '/';
 treePath.path = [{
     "sha": 'es-ES',
     "path": '/'
@@ -72,7 +72,7 @@ $(function() {
 
                     if (val.type == 'tree') icon = '<i class="fa fa-folder-o"></i>';
 
-                    let pathR = pasPath ? pasPath + '/' + val.path : val.path;
+                    let pathR = pasPath == "/"? pasPath + '/' + val.path : val.path;
 
                     $('#tree-content').append(`<li class="tree-item" sha="${val.sha}" path="${pathR}" type="${val.type}" >${icon} ${val.path}</li>`);
 
@@ -82,7 +82,7 @@ $(function() {
     }
 
     // Inicializo los elementos del arbol
-    tree('es-ES', false)
+    tree('es-ES', "/")
 
     // Si el elemento que se abre es un archivo lo muestra
     // de lo contrario carga los elementos del directorio  
@@ -110,7 +110,7 @@ $(function() {
             $('#tree-path').html('');
 
             treePath.path.forEach(function(val){
-            	$('#tree-path').append(`<li class="tree-item" sha="${val.sha}" path="${val.path}">${val.path}</li>`);
+            	$('#tree-path').append(`<li class="tree-item" sha="${val.sha}" path="${val.path}" type="tree">${val.path}</li>`);
             })
 
             
