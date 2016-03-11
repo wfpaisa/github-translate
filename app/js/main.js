@@ -1,138 +1,213 @@
 'use strict';
 
-// var R = require ( 'Ramda');
+const service = require('./services');
 
-// Revisare el corrector de idioma: "codemirror-spell-checker": "nextstepwebs/codemirror-spell-checker",
-var branch = 'es';
-var filePath = 'concepts/Assets/TaskAutomation.md';
-var fork = 'wfpaisa/sails-docs';
+// User
+const owner = 'wfpaisa';
 
-var service = require('./services');
+// Fork repo
+const repo = 'sails-docs';
 
+// File path
+var filePath = 'README.md';
+
+// Branch to translate
+var branch = 'es-ES';
+
+// Ruta del directorio activo
+var treePath = {};
+
+treePath.actualpath = '';
+treePath.path = [{
+    "sha": 'es-ES',
+    "path": '/'
+}];
+
+/* 
 // crea token en: https://github.com/settings/tokens
-// $.get('https://api.github.com/user?access_token=90d2977a99d409f9fd8dc4a3bd5a65866a019f5b', function(val){
-// 	console.log(val)
-// })
+$.get('https://api.github.com/user?access_token=90d2977a99d409f9fd8dc4a3bd5a65866a019f5b', function(val){
+	console.log(val)
+})
+*/
 
-
-
-// Shorthand for $( document ).ready()
+// Document ready
 $(function() {
 
-	// Inicia el markdown
-	var simplemde = new SimpleMDE({
-		element: $("#editor")[0],
-		spellChecker: false,
-		renderingConfig: {
-			singleLineBreaks: false,
-			codeSyntaxHighlighting: true,
-		},
-
-	});
+    // Acciones tree
+    $('#tree-menu').click(function(e) {
+        $('#tree').show();
+    })
+    $('#tree-close').click(function(e) {
+        $('#tree').hide();
+    })
 
 
-	/* Retorna el contenido de un archivo
-	 * Repositior principal
-	 * sails-docs/concepts/Assets/TaskAutomation.md
-	 * GET /repos/:owner/:repo/contents/:path
-	 */
-	var repoTraducida = new Promise(function(resolve, reject) {
-		var url1 = `https://api.github.com/repos/${fork}/contents/${filePath}?ref=${branch}`;
+    // Inicia el markdown
+    var simplemde = new SimpleMDE({
+        element: $("#editor")[0],
+        spellChecker: false,
+        renderingConfig: {
+            singleLineBreaks: false,
+            codeSyntaxHighlighting: true,
+        },
 
-		$.ajax({
-			headers: {
-				Accept: "application/vnd.github.v3.raw",
-			},
-			url: url1,
-			method: "GET"
-		}).done(function(data) {
+    });
 
-			// Lleno el editor
-			simplemde.value(data);
+    // Carga los elementos de la carpeta que se pase por parametro
+    function tree(pasSha, pasPath) {
 
-			resolve(data);
+        let icon = '<span class="file-blank"></span>';
 
-		}).fail(function(err) {
-			console.log(err.responseText)
-		})
-
-	});
-
-	/** 
-	 * Repo desde el cual se  hiso la traducción
-	 *
-	 * Se busca el contenido del archivo en el estado del Sha encontrado en el comentario del
-	 * commit del archivo.
-	 */
-	var repoBaseATraducir = new Promise(function(resolve, reject) {
-
-		repoTraducida.then(function(val) {
-
-			var url2 = `https://api.github.com/repos/${fork}/commits?path=${filePath}&sha=${branch}`
-
-			$.get(url2, function(data) {
-
-				var sha = JSON.parse(data[0].commit.message).sha;
-
-				// Retorna el archivo del cual se realizo la traducción.
-				$.get(`https://api.github.com/repos/${fork}/contents/${filePath}?ref=${sha}`, function(data) {
-					resolve(service.b64_to_utf8(data.content));
-				})
-
-			});
-
-		}, function(err) {
-			if (err) console.log('error ')
-		})
-	});
+        // elmino el contenido del ul
+        $('#tree-content').html('');
 
 
-	var repoMaster = new Promise(function(resolve, reject) {
+        // Tree file 
+        var repoTree = new Promise(function(resolve, reject) {
 
-		// Retorna el archivo del cual se realizo la traducción.
-		$.get(`https://api.github.com/repos/${fork}/contents/${filePath}`, function(data) {
-			resolve(service.b64_to_utf8(data.content));
-		})
+            $.get(`https://api.github.com/repos/${owner}/${repo}/git/trees/${pasSha}`, function(data) {
 
-	})
+                data.tree.forEach(function(val) {
+
+
+                    if (val.type == 'tree') icon = '<i class="fa fa-folder-o"></i>';
+
+                    let pathR = pasPath ? pasPath + '/' + val.path : val.path;
+
+                    $('#tree-content').append(`<li class="tree-item" sha="${val.sha}" path="${pathR}" type="${val.type}" >${icon} ${val.path}</li>`);
+
+                });
+            })
+        })
+    }
+
+    // Inicializo los elementos del arbol
+    tree('es-ES', false)
+
+    // Si el elemento que se abre es un archivo lo muestra
+    // de lo contrario carga los elementos del directorio  
+    $("#tree").on("click", ".tree-item", function(element) {
+
+        let sha = $(element.currentTarget).attr('sha');
+        let path = $(element.currentTarget).attr('path');
+        let type = $(element.currentTarget).attr('type');
 
 
 
-	var repoTree = new Promise(function(resolve, reject) {
+        // Carga el archivo en el editor
+        if (type === "blob") editFile(sha, path);
 
-		$.get('https://api.github.com/repos/wfpaisa/sails-docs/git/trees/master', function(data) {
+        // Carga los elementos de la carpeta que se le dio click
+        if (type === "tree") {
 
-			data.tree.forEach(function(val) {
+            tree(sha, path);
 
-				var icon = '<span class="file-blank"></span>';
+            treePath.path.push({
+                "sha": sha,
+                "path": path
+            })
 
-				if (val.type == 'tree') icon = '<i class="fa fa-folder-o"></i>';
+            $('#tree-path').html('');
 
-				$('#tree ul').append(`<li>${icon} ${val.path}</li>`);
+            treePath.path.forEach(function(val){
+            	$('#tree-path').append(`<li class="tree-item" sha="${val.sha}" path="${val.path}">${val.path}</li>`);
+            })
 
-			});
-		})
-	})
+            
+        }
 
-
-
-	//R.map(double, [1, 2, 3]); //=> [2, 4, 6]
-
+    });
 
 
-	// Se activa cuando estan,
-	Promise.all([repoBaseATraducir, repoMaster]).then(function(values) {
-		service.diferencia(values[0], values[1], 'diff');
+    function editFile(pasSha, pasPath) {
 
-	});
+        /* Retorna el contenido de un archivo
+         * Repositior principal
+         * sails-docs/concepts/Assets/TaskAutomation.md
+         * GET /repos/:owner/:repo/contents/:path
+         */
+        var repoTraducida = new Promise(function(resolve, reject) {
 
-// Acciones tree
-	$('#tree-menu').click(function(e){
-		$('#tree').fadeIn();
-	})
-	$('#tree-close').click(function(e){
-		$('#tree').fadeOut();
-	})
+            let url = `https://api.github.com/repos/${owner}/${repo}/contents/${pasPath}?ref=${branch}`;
+
+            console.log('url consulta: ', url)
+
+            $.ajax({
+                headers: {
+                    Accept: "application/vnd.github.v3.raw",
+                },
+                url: url,
+                method: "GET"
+            }).done(function(data) {
+
+                // Lleno el editor
+                simplemde.value(data);
+
+                resolve(data);
+
+            }).fail(function(err) {
+                console.log(err.responseText);
+            })
+            //fin ajax
+
+        });
+        //fin repoTraducida
+    }
+    //fin editFile
+
+
+
+
+
+
+
+    // /** 
+    //  * Repo desde el cual se  hiso la traducción
+    //  *
+    //  * Se busca el contenido del archivo en el estado del Sha encontrado en el comentario del
+    //  * commit del archivo.
+    //  */
+    // var repoBaseATraducir = new Promise(function(resolve, reject) {
+
+    // 	repoTraducida.then(function(val) {
+
+    // 		var url2 = `https://api.github.com/repos/${owner}/${repo}/commits?path=${filePath}&sha=${branch}`
+
+    // 		$.get(url2, function(data) {
+
+    // 			var sha = JSON.parse(data[0].commit.message).sha;
+
+    // 			// Retorna el archivo del cual se realizo la traducción.
+    // 			$.get(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}?ref=${sha}`, function(data) {
+    // 				resolve(service.b64_to_utf8(data.content));
+    // 			})
+
+    // 		});
+
+    // 	}, function(err) {
+    // 		if (err) console.log('error ')
+    // 	})
+    // });
+
+
+    // var repoMaster = new Promise(function(resolve, reject) {
+
+    // 	// Retorna el archivo del cual se realizo la traducción.
+    // 	$.get(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, function(data) {
+    // 		resolve(service.b64_to_utf8(data.content));
+    // 	})
+
+    // })
+
+
+    // // Se activa cuando estan,
+    // Promise.all([repoBaseATraducir, repoMaster]).then(function(values) {
+    // 	service.diferencia(values[0], values[1], 'diff');
+
+    // });
+
+
+
 
 
 });
