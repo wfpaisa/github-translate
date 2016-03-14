@@ -271,7 +271,13 @@ $(function() {
 	})
 
 	$('#mnu-settings').click(function(e) {
-		$('#settings').fadeIn();
+
+		if( $('#settings').css('display') === 'none'){
+			$('#settings').fadeIn();	
+		}else{
+			$('#settings').fadeOut();
+		}
+		
 	})
 
 
