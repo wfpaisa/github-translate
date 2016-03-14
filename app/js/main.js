@@ -1,6 +1,7 @@
 'use strict';
 
 const service = require('./services');
+const confg = require('./confg');
 
 // User
 const owner = 'wfpaisa';
@@ -25,8 +26,8 @@ treePath.breadcrumb = [{
 }];
 
 /* 
-// crea token en: https://github.com/settings/tokens
-$.get('https://api.github.com/user?access_token=90d2977a99d409f9fd8dc4a3bd5a65866a019f5b', function(val){
+ // Token
+$.get(`https://api.github.com/user?access_token=${config.token}`, function(val){
 	console.log(val)
 })
 */
@@ -167,6 +168,8 @@ $(function() {
         })
 
     });
+
+
 
 
     // CARGA UN ARCHIVO EN EL EDITOR
