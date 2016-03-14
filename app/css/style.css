@@ -60,7 +60,7 @@
 /* Cuerpo */
 	#main{display:block; padding-top:48px; height:100%; overflow:hidden;}
 	
-	#main #edit{float:left; height:100%; position:relative; width:50%; overflow:hidden;}
+	#main #edit{float:left; height:100%; position:relative; width:100%; overflow:hidden;}
 	#main textarea#editor{float:left; border:none; background:none; resize:none; height:100%; padding:48px 50px; width:100%; font-size:15px; line-height:1.6em; font-weight:400; color:#001c20;}
 	
 	/* Markdow */
@@ -96,7 +96,7 @@
 	.editor-toolbar{border-bottom:1px solid #eee; border-right:none;}
 
 
-	#main #diff{background:#FFF; border-left:1px solid #DDE9F3; float:left; height:100%; padding:48px 50px; overflow:scroll; white-space:pre-wrap; width:50%;}
+	#main #diff{background:#FFF; display:none; border-left:1px solid #DDE9F3; float:left; height:100%; padding:48px 50px; overflow:scroll; white-space:pre-wrap; width:50%;}
 	#main #diff .green{background:#BBFFE9;}
 	#main #diff .red{background:#F57890; color:#FFF;}
 	#main #diff .red{background:#F5BCC7;}

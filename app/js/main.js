@@ -39,15 +39,25 @@ $(function() {
 		// Branch to translate
 		branch = $('#field-branch').val();
 
+		// Token
+		var token = $('#field-token').val();
+
 		// Inicializo los elementos del arbol
 		tree(branch, '');
-		
+
 		$('#settings').fadeOut();
-		
+
 		// Creo el primer breadcrumb
 		$('#tree-breadcrumb').html('');
 
 		$('#tree-breadcrumb').append(`<li class="tree-item" sha="${treePath.breadcrumb[0].sha}" path="${treePath.breadcrumb[0].path}" name="${treePath.breadcrumb[0].name}" type="tree">${treePath.breadcrumb[0].name}</li>`);
+
+		// Token
+		if (token) {
+			$.get(`https://api.github.com/user?access_token=${token}`, function(val) {
+				console.log(val)
+			})
+		}
 
 	})
 
@@ -252,12 +262,6 @@ $(function() {
 
 	// });
 
-	/* 
-	 // Token
-	$.get(`https://api.github.com/user?access_token=${config.token}`, function(val){
-		console.log(val)
-	})
-	*/
 
 	// Acciones tree
 	$('#tree-menu').click(function(e) {
@@ -265,6 +269,7 @@ $(function() {
 		$('#tree-close').show();
 
 	})
+
 	$('#tree-close').click(function(e) {
 		$('#tree').fadeOut();
 		$('#tree-close').fadeOut();
@@ -272,12 +277,12 @@ $(function() {
 
 	$('#mnu-settings').click(function(e) {
 
-		if( $('#settings').css('display') === 'none'){
-			$('#settings').fadeIn();	
-		}else{
+		if ($('#settings').css('display') === 'none') {
+			$('#settings').fadeIn();
+		} else {
 			$('#settings').fadeOut();
 		}
-		
+
 	})
 
 
