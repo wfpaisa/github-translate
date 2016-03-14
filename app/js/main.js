@@ -18,9 +18,10 @@ var branch = 'es-ES';
 var treePath = {};
 
 treePath.actualpath = '/';
-treePath.path = [{
+treePath.breadcrumb = [{
     "sha": 'es-ES',
-    "path": '/'
+    "path": '',
+    "name": 'root'
 }];
 
 /* 
@@ -36,9 +37,12 @@ $(function() {
     // Acciones tree
     $('#tree-menu').click(function(e) {
         $('#tree').show();
+        $('#tree-close').show();
+
     })
     $('#tree-close').click(function(e) {
-        $('#tree').hide();
+        $('#tree').fadeOut();
+        $('#tree-close').fadeOut();
     })
 
 
@@ -56,7 +60,6 @@ $(function() {
     // Carga los elementos de la carpeta que se pase por parametro
     function tree(pasSha, pasPath) {
 
-        let icon = '<span class="file-blank"></span>';
 
         // elmino el contenido del ul
         $('#tree-content').html('');
@@ -70,55 +73,103 @@ $(function() {
                 data.tree.forEach(function(val) {
 
 
-                    if (val.type == 'tree') icon = '<i class="fa fa-folder-o"></i>';
+                    let icon = (val.type === 'tree') ? '<i class="fa fa-folder-o"></i>' : '<span class="file-blank"></span>';
 
-                    let pathR = pasPath == "/"? pasPath + '/' + val.path : val.path;
+                    let pathR = (pasPath === '') ? val.path : pasPath + '/' + val.path;
 
-                    $('#tree-content').append(`<li class="tree-item" sha="${val.sha}" path="${pathR}" type="${val.type}" >${icon} ${val.path}</li>`);
+                    $('#tree-content').append(`<li class="tree-item" sha="${val.sha}" path="${pathR}" name="${val.path}" type="${val.type}" >${icon} ${val.path}</li>`);
 
                 });
             })
         })
     }
 
-    // Inicializo los elementos del arbol
-    tree('es-ES', "/")
 
+
+    // ARBOL DE ELEMENTOS
     // Si el elemento que se abre es un archivo lo muestra
     // de lo contrario carga los elementos del directorio  
-    $("#tree").on("click", ".tree-item", function(element) {
+    $("#tree-content").on("click", ".tree-item", function(element) {
 
-        let sha = $(element.currentTarget).attr('sha');
-        let path = $(element.currentTarget).attr('path');
-        let type = $(element.currentTarget).attr('type');
+        let nObj = {
+            sha: $(element.currentTarget).attr('sha'),
+            path: $(element.currentTarget).attr('path'),
+            type: $(element.currentTarget).attr('type'),
+            name: $(element.currentTarget).attr('name'),
+        }
 
+
+
+        if (nObj.type === "tree") {
+
+            // Carga el arbol de elementos    
+            tree(nObj.sha, nObj.path);
+
+            // Carga el arbol de elementos
+            treePath.breadcrumb.push({
+                "sha": nObj.sha,
+                "path": nObj.path,
+                "name": nObj.name
+            })
+
+            $('#tree-breadcrumb').html('');
+
+            treePath.breadcrumb.forEach(function(val) {
+                $('#tree-breadcrumb').append(`<li class="tree-item" sha="${val.sha}" path="${val.path}" name="${val.name}" type="tree">${val.name}</li>`);
+            })
+
+        }
 
 
         // Carga el archivo en el editor
-        if (type === "blob") editFile(sha, path);
-
-        // Carga los elementos de la carpeta que se le dio click
-        if (type === "tree") {
-
-            tree(sha, path);
-
-            treePath.path.push({
-                "sha": sha,
-                "path": path
-            })
-
-            $('#tree-path').html('');
-
-            treePath.path.forEach(function(val){
-            	$('#tree-path').append(`<li class="tree-item" sha="${val.sha}" path="${val.path}" type="tree">${val.path}</li>`);
-            })
-
-            
+        if (nObj.type === "blob") {
+            $('#tree').fadeOut();
+            $('#tree-close').fadeOut();
+            editFile(nObj.sha, nObj.path);
         }
 
     });
 
 
+
+
+    // BREADCRUMBS
+    $("#tree-breadcrumb").on("click", ".tree-item", function(element) {
+
+        let nObj = {
+            sha: $(element.currentTarget).attr('sha'),
+            path: $(element.currentTarget).attr('path'),
+            type: $(element.currentTarget).attr('type'),
+            name: $(element.currentTarget).attr('name'),
+        }
+
+        let okArray = true;
+        let tempArray = [];
+
+        // Carga el arbol de elementos    
+        tree(nObj.sha, nObj.path);
+
+        // Construlle un nuevo array hasta el punto donde se 
+        // le dio click
+        for (let i in treePath.breadcrumb) {
+            if (okArray) {
+                tempArray.push(treePath.breadcrumb[i])
+                if (treePath.breadcrumb[i].path === nObj.path) okArray = false
+            }
+        }
+
+        treePath.breadcrumb = tempArray;
+
+        $('#tree-breadcrumb').html('');
+
+        tempArray.forEach(function(val) {
+            $('#tree-breadcrumb').append(`<li class="tree-item" sha="${val.sha}" path="${val.path}" name="${val.name}" type="tree">${val.name}</li>`);
+        })
+
+    });
+
+
+    // CARGA UN ARCHIVO EN EL EDITOR
     function editFile(pasSha, pasPath) {
 
         /* Retorna el contenido de un archivo
@@ -130,7 +181,7 @@ $(function() {
 
             let url = `https://api.github.com/repos/${owner}/${repo}/contents/${pasPath}?ref=${branch}`;
 
-            console.log('url consulta: ', url)
+            console.log('get: ', url)
 
             $.ajax({
                 headers: {
@@ -154,8 +205,6 @@ $(function() {
         //fin repoTraducida
     }
     //fin editFile
-
-
 
 
 
@@ -208,6 +257,11 @@ $(function() {
 
 
 
+    // Inicializo los elementos del arbol
+    tree('es-ES', '');
+
+    // Creo el primer breadcrumb
+    $('#tree-breadcrumb').append(`<li class="tree-item" sha="${treePath.breadcrumb[0].sha}" path="${treePath.breadcrumb[0].path}" name="${treePath.breadcrumb[0].name}" type="tree">${treePath.breadcrumb[0].name}</li>`);
 
 
 });
