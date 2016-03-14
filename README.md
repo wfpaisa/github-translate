@@ -13,7 +13,7 @@ Revisar el corrector de idioma: "codemirror-spell-checker": "nextstepwebs/codemi
 
 renombrar `app/js/config.rename.js` -> `app/js/config.js` y agregar el token generado desde github: (https://github.com/settings/tokens)
 
-[preview](preview.png)
+![](./preview.png?raw=true)
 
 # Mejoras
 
