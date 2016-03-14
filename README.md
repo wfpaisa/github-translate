@@ -11,7 +11,7 @@ Actualmente trabajando con node.JS v5.
 
 Revisar el corrector de idioma: "codemirror-spell-checker": "nextstepwebs/codemirror-spell-checker",
 
-
+renombrar `app/js/config.rename.js` -> `app/js/config.js` y agregar el token generado desde github: (https://github.com/settings/tokens)
 
 # Mejoras
 
