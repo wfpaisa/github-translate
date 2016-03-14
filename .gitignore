@@ -124,3 +124,6 @@ documentacion/frontend
 
 
 public/*
+
+# Archivo de configuración
+app/js/config.js
