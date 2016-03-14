@@ -7,7 +7,7 @@ module.exports = {
      * https://github.com/settings/tokens
 	 */
 	token: function(){    
-       return '';
+       return ' ';
 	},
 
 }
