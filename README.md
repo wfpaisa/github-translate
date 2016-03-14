@@ -4,16 +4,18 @@ Actualmente trabajando con node.JS v5.
 
 ## Install 
 
-`bower install`
+- `bower install`
+- `npm i `
 
-`npm i `
+## Configurar
 
+Desplegar la configuración e ingresar: Usuario, Repositorio y la Rama, si es el caso generar un [token](https://github.com/settings/tokens) por si github no permite o indica que se exedieron las consultas.
 
-Revisar el corrector de idioma: "codemirror-spell-checker": "nextstepwebs/codemirror-spell-checker",
+---
 
-renombrar `app/js/config.rename.js` -> `app/js/config.js` y agregar el token generado desde github: (https://github.com/settings/tokens)
+![preview](./preview.png?raw=true)
 
-![](./preview.png?raw=true)
+---
 
 # Mejoras
 
@@ -31,3 +33,4 @@ renombrar `app/js/config.rename.js` -> `app/js/config.js` y agregar el token gen
 
 ## Versión 3
 - Poder guardar el archivo traducido directamente en el github
+- Revisar el corrector de idioma: "codemirror-spell-checker": "nextstepwebs/codemirror-spell-checker",
