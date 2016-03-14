@@ -4,6 +4,7 @@
 	html{height:100%;}
 	body{font-size:1em; color:#2c3f51; margin:0px; height:100%; font-family:"Open Sans",Helvetica,Arial,sans-serif;}
 
+	a{color:#68F1FF;}
 
 	/*contenedor */
 	#contenido::before,
@@ -19,16 +20,27 @@
 	::selection{background:#73C2AD; color:#FFF;}
 	::-moz-selection {background:#73C2AD; color:#FFF;}
 
+	/* Forms */
+	form label{display:block; font-size:90%;}
+	form input{display:block; width:100%; border:none; line-height:32px; border-radius:4px; padding: 0 5px;}
+	button{background:#68F1FF; border-radius:4px; border:none; padding: 6px 20px;}
+	form .form-info{font-size: 84%; text-align:right; }
 
 
 /* Header */
 	#page-header{background:#143343; color:#CEE4F3; line-height:48px; height:48px; right:0px; width:100%; position:absolute; padding:0px 10px; z-index:8;}
-	#page-header ul{ list-style:none; padding:0px; margin:0px;}
-	#page-header ul li{display:inline-block; padding:0 5px; cursor:pointer;}
+	#page-header ul#mnu-left{float:left; list-style:none; padding:0px; margin:0px;}
+	#page-header ul#mnu-left li{float:left; padding:0 5px;}
+	#page-header ul#mnu-left li#header-path-file span{ background:rgba(255,255,255,0.1);  border-radius:6px; color:#FFF; padding:5px 10px; font-size:80%;}
+	#page-header #tree-menu{font-size:24px; cursor:pointer;}
+
+	#page-header ul#mnu-right{float:right; margin:0px; list-style:none; padding:0px;}
+	#page-header ul#mnu-right li{display:inline-block;}
+	#page-header #mnu-settings{cursor:pointer; font-size:24px;}
 
 /* Tree */
-	#tree{background:#FFF; font-size:90%; height:100%; top:0px; left:0px; box-shadow:0px 0px 6px 2px rgba(0,0,0,0.4); position:absolute; overflow-y:scroll; width:300px; z-index:102;}
-	#tree-close{background:rgba(0,20,40,0.6); cursor:zoom-out; height:100%; width:100%; position:absolute; top:0px; left:0px; z-index:101;}
+	#tree{background:#FFF; display:none; font-size:90%; height:100%; top:0px; left:0px; box-shadow:0px 0px 6px 2px rgba(0,0,0,0.4); position:absolute; overflow-y:scroll; width:300px; z-index:102;}
+	#tree-close{background:rgba(0,20,40,0.6); display:none; cursor:zoom-out; height:100%; width:100%; position:absolute; top:0px; left:0px; z-index:101;}
 	
 	.treelist{background:#FDFDFD; list-style:none; padding:15px 10px; margin:0px;}
 	.treelist li{cursor:pointer; color:#416C7F; margin:3px 0px;}
@@ -39,11 +51,15 @@
 	#tree-breadcrumb li{display:inline; margin-left:5px;}
 	#tree-breadcrumb li:after{content:' /'; color:#888D8D;}
 
+/* Settings */
+	#settings{background:#143343; display:none; font-size:90%; position:absolute; top:48px; right:0px; border-bottom-left-radius:10px; width:400px; padding:10px; z-index:100;}
+	#settings .form-info,
+	#settings label{color:#C3E3F1;}
+	#settings button:hover{ box-shadow:0px 0px 4px 4px rgba(255,255,255,0.2) }
 
 /* Cuerpo */
 	#main{display:block; padding-top:48px; height:100%; overflow:hidden;}
 	
-
 	#main #edit{float:left; height:100%; position:relative; width:50%; overflow:hidden;}
 	#main textarea#editor{float:left; border:none; background:none; resize:none; height:100%; padding:48px 50px; width:100%; font-size:15px; line-height:1.6em; font-weight:400; color:#001c20;}
 	

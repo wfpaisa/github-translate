@@ -1,270 +1,292 @@
 'use strict';
 
 const service = require('./services');
-const confg = require('./confg');
 
-// User
-const owner = 'wfpaisa';
 
-// Fork repo
-const repo = 'sails-docs';
-
-// File path
-var filePath = 'README.md';
-
-// Branch to translate
-var branch = 'es-ES';
-
-// Ruta del directorio activo
-var treePath = {};
-
-treePath.actualpath = '/';
-treePath.breadcrumb = [{
-    "sha": 'es-ES',
-    "path": '',
-    "name": 'root'
-}];
-
-/* 
- // Token
-$.get(`https://api.github.com/user?access_token=${config.token}`, function(val){
-	console.log(val)
-})
-*/
 
 // Document ready
 $(function() {
 
-    // Acciones tree
-    $('#tree-menu').click(function(e) {
-        $('#tree').show();
-        $('#tree-close').show();
+	// User
+	var owner = '';
 
-    })
-    $('#tree-close').click(function(e) {
-        $('#tree').fadeOut();
-        $('#tree-close').fadeOut();
-    })
+	// Fork repo
+	var repo = '';
 
+	// Branch to translate
+	var branch = '';
 
-    // Inicia el markdown
-    var simplemde = new SimpleMDE({
-        element: $("#editor")[0],
-        spellChecker: false,
-        renderingConfig: {
-            singleLineBreaks: false,
-            codeSyntaxHighlighting: true,
-        },
+	// Ruta del directorio activo
+	var treePath = {};
 
-    });
+	treePath.actualpath = '/';
+	treePath.breadcrumb = [{
+		"sha": branch,
+		"path": '',
+		"name": 'root'
+	}];
 
-    // Carga los elementos de la carpeta que se pase por parametro
-    function tree(pasSha, pasPath) {
+	// Settings
+	$('#save-settings').click(function(e) {
+		e.preventDefault();
 
+		// User
+		owner = $('#field-owner').val();
 
-        // elmino el contenido del ul
-        $('#tree-content').html('');
+		// Fork repo
+		repo = $('#field-repo').val();
 
+		// Branch to translate
+		branch = $('#field-branch').val();
 
-        // Tree file 
-        var repoTree = new Promise(function(resolve, reject) {
+		// Inicializo los elementos del arbol
+		tree(branch, '');
+		
+		$('#settings').fadeOut();
+		
+		// Creo el primer breadcrumb
+		$('#tree-breadcrumb').html('');
 
-            $.get(`https://api.github.com/repos/${owner}/${repo}/git/trees/${pasSha}`, function(data) {
+		$('#tree-breadcrumb').append(`<li class="tree-item" sha="${treePath.breadcrumb[0].sha}" path="${treePath.breadcrumb[0].path}" name="${treePath.breadcrumb[0].name}" type="tree">${treePath.breadcrumb[0].name}</li>`);
 
-                data.tree.forEach(function(val) {
+	})
 
 
-                    let icon = (val.type === 'tree') ? '<i class="fa fa-folder-o"></i>' : '<span class="file-blank"></span>';
 
-                    let pathR = (pasPath === '') ? val.path : pasPath + '/' + val.path;
+	// Carga los elementos de la carpeta que se pase por parametro
+	function tree(pasSha, pasPath) {
 
-                    $('#tree-content').append(`<li class="tree-item" sha="${val.sha}" path="${pathR}" name="${val.path}" type="${val.type}" >${icon} ${val.path}</li>`);
 
-                });
-            })
-        })
-    }
+		// elmino el contenido del ul
+		$('#tree-content').html('');
 
 
+		// Tree file 
+		var repoTree = new Promise(function(resolve, reject) {
+			console.log('aca')
+			$.get(`https://api.github.com/repos/${owner}/${repo}/git/trees/${pasSha}`, function(data) {
 
-    // ARBOL DE ELEMENTOS
-    // Si el elemento que se abre es un archivo lo muestra
-    // de lo contrario carga los elementos del directorio  
-    $("#tree-content").on("click", ".tree-item", function(element) {
+				data.tree.forEach(function(val) {
 
-        let nObj = {
-            sha: $(element.currentTarget).attr('sha'),
-            path: $(element.currentTarget).attr('path'),
-            type: $(element.currentTarget).attr('type'),
-            name: $(element.currentTarget).attr('name'),
-        }
 
+					let icon = (val.type === 'tree') ? '<i class="fa fa-folder-o"></i>' : '<span class="file-blank"></span>';
 
+					let pathR = (pasPath === '') ? val.path : pasPath + '/' + val.path;
 
-        if (nObj.type === "tree") {
+					$('#tree-content').append(`<li class="tree-item" sha="${val.sha}" path="${pathR}" name="${val.path}" type="${val.type}" >${icon} ${val.path}</li>`);
 
-            // Carga el arbol de elementos    
-            tree(nObj.sha, nObj.path);
+				});
+			})
+		})
+	}
 
-            // Carga el arbol de elementos
-            treePath.breadcrumb.push({
-                "sha": nObj.sha,
-                "path": nObj.path,
-                "name": nObj.name
-            })
 
-            $('#tree-breadcrumb').html('');
 
-            treePath.breadcrumb.forEach(function(val) {
-                $('#tree-breadcrumb').append(`<li class="tree-item" sha="${val.sha}" path="${val.path}" name="${val.name}" type="tree">${val.name}</li>`);
-            })
+	// ARBOL DE ELEMENTOS
+	// Si el elemento que se abre es un archivo lo muestra
+	// de lo contrario carga los elementos del directorio  
+	$("#tree-content").on("click", ".tree-item", function(element) {
 
-        }
+		let nObj = {
+			sha: $(element.currentTarget).attr('sha'),
+			path: $(element.currentTarget).attr('path'),
+			type: $(element.currentTarget).attr('type'),
+			name: $(element.currentTarget).attr('name'),
+		}
 
 
-        // Carga el archivo en el editor
-        if (nObj.type === "blob") {
-            $('#tree').fadeOut();
-            $('#tree-close').fadeOut();
-            editFile(nObj.sha, nObj.path);
-        }
 
-    });
+		if (nObj.type === "tree") {
 
+			// Carga el arbol de elementos    
+			tree(nObj.sha, nObj.path);
 
+			// Carga el arbol de elementos
+			treePath.breadcrumb.push({
+				"sha": nObj.sha,
+				"path": nObj.path,
+				"name": nObj.name
+			})
 
+			$('#tree-breadcrumb').html('');
 
-    // BREADCRUMBS
-    $("#tree-breadcrumb").on("click", ".tree-item", function(element) {
+			treePath.breadcrumb.forEach(function(val) {
+				$('#tree-breadcrumb').append(`<li class="tree-item" sha="${val.sha}" path="${val.path}" name="${val.name}" type="tree">${val.name}</li>`);
+			})
 
-        let nObj = {
-            sha: $(element.currentTarget).attr('sha'),
-            path: $(element.currentTarget).attr('path'),
-            type: $(element.currentTarget).attr('type'),
-            name: $(element.currentTarget).attr('name'),
-        }
+		}
 
-        let okArray = true;
-        let tempArray = [];
 
-        // Carga el arbol de elementos    
-        tree(nObj.sha, nObj.path);
+		// Carga el archivo en el editor
+		if (nObj.type === "blob") {
+			$('#tree').fadeOut();
+			$('#tree-close').fadeOut();
 
-        // Construlle un nuevo array hasta el punto donde se 
-        // le dio click
-        for (let i in treePath.breadcrumb) {
-            if (okArray) {
-                tempArray.push(treePath.breadcrumb[i])
-                if (treePath.breadcrumb[i].path === nObj.path) okArray = false
-            }
-        }
+			$('#header-path-file span').html(nObj.path);
 
-        treePath.breadcrumb = tempArray;
+			editFile(nObj.sha, nObj.path);
+		}
 
-        $('#tree-breadcrumb').html('');
+	});
 
-        tempArray.forEach(function(val) {
-            $('#tree-breadcrumb').append(`<li class="tree-item" sha="${val.sha}" path="${val.path}" name="${val.name}" type="tree">${val.name}</li>`);
-        })
 
-    });
 
+	// BREADCRUMBS
+	$("#tree-breadcrumb").on("click", ".tree-item", function(element) {
 
+		let nObj = {
+			sha: $(element.currentTarget).attr('sha'),
+			path: $(element.currentTarget).attr('path'),
+			type: $(element.currentTarget).attr('type'),
+			name: $(element.currentTarget).attr('name'),
+		}
 
+		let okArray = true;
+		let tempArray = [];
 
-    // CARGA UN ARCHIVO EN EL EDITOR
-    function editFile(pasSha, pasPath) {
+		// Carga el arbol de elementos    
+		tree(nObj.sha, nObj.path);
 
-        /* Retorna el contenido de un archivo
-         * Repositior principal
-         * sails-docs/concepts/Assets/TaskAutomation.md
-         * GET /repos/:owner/:repo/contents/:path
-         */
-        var repoTraducida = new Promise(function(resolve, reject) {
+		// Construlle un nuevo array hasta el punto donde se 
+		// le dio click
+		for (let i in treePath.breadcrumb) {
+			if (okArray) {
+				tempArray.push(treePath.breadcrumb[i])
+				if (treePath.breadcrumb[i].path === nObj.path) okArray = false
+			}
+		}
 
-            let url = `https://api.github.com/repos/${owner}/${repo}/contents/${pasPath}?ref=${branch}`;
+		treePath.breadcrumb = tempArray;
 
-            console.log('get: ', url)
+		$('#tree-breadcrumb').html('');
 
-            $.ajax({
-                headers: {
-                    Accept: "application/vnd.github.v3.raw",
-                },
-                url: url,
-                method: "GET"
-            }).done(function(data) {
+		tempArray.forEach(function(val) {
+			$('#tree-breadcrumb').append(`<li class="tree-item" sha="${val.sha}" path="${val.path}" name="${val.name}" type="tree">${val.name}</li>`);
+		})
 
-                // Lleno el editor
-                simplemde.value(data);
+	});
 
-                resolve(data);
 
-            }).fail(function(err) {
-                console.log(err.responseText);
-            })
-            //fin ajax
 
-        });
-        //fin repoTraducida
-    }
-    //fin editFile
+	// CARGA UN ARCHIVO EN EL EDITOR
+	function editFile(pasSha, pasPath) {
 
+		/* Retorna el contenido de un archivo
+		 * Repositior principal
+		 * sails-docs/concepts/Assets/TaskAutomation.md
+		 * GET /repos/:owner/:repo/contents/:path
+		 */
+		var repoTraducida = new Promise(function(resolve, reject) {
 
+			let url = `https://api.github.com/repos/${owner}/${repo}/contents/${pasPath}?ref=${branch}`;
 
+			console.log('get: ', url)
 
+			$.ajax({
+				headers: {
+					Accept: "application/vnd.github.v3.raw",
+				},
+				url: url,
+				method: "GET"
+			}).done(function(data) {
 
-    // /** 
-    //  * Repo desde el cual se  hiso la traducción
-    //  *
-    //  * Se busca el contenido del archivo en el estado del Sha encontrado en el comentario del
-    //  * commit del archivo.
-    //  */
-    // var repoBaseATraducir = new Promise(function(resolve, reject) {
+				// Lleno el editor
+				simplemde.value(data);
 
-    // 	repoTraducida.then(function(val) {
+				resolve(data);
 
-    // 		var url2 = `https://api.github.com/repos/${owner}/${repo}/commits?path=${filePath}&sha=${branch}`
+			}).fail(function(err) {
+				console.log(err.responseText);
+			})
+			//fin ajax
 
-    // 		$.get(url2, function(data) {
+		});
+		//fin repoTraducida
+	}
+	//fin editFile
 
-    // 			var sha = JSON.parse(data[0].commit.message).sha;
 
-    // 			// Retorna el archivo del cual se realizo la traducción.
-    // 			$.get(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}?ref=${sha}`, function(data) {
-    // 				resolve(service.b64_to_utf8(data.content));
-    // 			})
 
-    // 		});
+	// /** 
+	//  * Repo desde el cual se  hiso la traducción
+	//  *
+	//  * Se busca el contenido del archivo en el estado del Sha encontrado en el comentario del
+	//  * commit del archivo.
+	//  */
+	// var repoBaseATraducir = new Promise(function(resolve, reject) {
 
-    // 	}, function(err) {
-    // 		if (err) console.log('error ')
-    // 	})
-    // });
+	// 	repoTraducida.then(function(val) {
 
+	// 		var url2 = `https://api.github.com/repos/${owner}/${repo}/commits?path=${initialFilePath}&sha=${branch}`
 
-    // var repoMaster = new Promise(function(resolve, reject) {
+	// 		$.get(url2, function(data) {
 
-    // 	// Retorna el archivo del cual se realizo la traducción.
-    // 	$.get(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, function(data) {
-    // 		resolve(service.b64_to_utf8(data.content));
-    // 	})
+	// 			var sha = JSON.parse(data[0].commit.message).sha;
 
-    // })
+	// 			// Retorna el archivo del cual se realizo la traducción.
+	// 			$.get(`https://api.github.com/repos/${owner}/${repo}/contents/${initialFilePath}?ref=${sha}`, function(data) {
+	// 				resolve(service.b64_to_utf8(data.content));
+	// 			})
 
+	// 		});
 
-    // // Se activa cuando estan,
-    // Promise.all([repoBaseATraducir, repoMaster]).then(function(values) {
-    // 	service.diferencia(values[0], values[1], 'diff');
+	// 	}, function(err) {
+	// 		if (err) console.log('error ')
+	// 	})
+	// });
 
-    // });
 
+	// var repoMaster = new Promise(function(resolve, reject) {
 
+	// 	// Retorna el archivo del cual se realizo la traducción.
+	// 	$.get(`https://api.github.com/repos/${owner}/${repo}/contents/${initialFilePath}`, function(data) {
+	// 		resolve(service.b64_to_utf8(data.content));
+	// 	})
 
-    // Inicializo los elementos del arbol
-    tree('es-ES', '');
+	// })
 
-    // Creo el primer breadcrumb
-    $('#tree-breadcrumb').append(`<li class="tree-item" sha="${treePath.breadcrumb[0].sha}" path="${treePath.breadcrumb[0].path}" name="${treePath.breadcrumb[0].name}" type="tree">${treePath.breadcrumb[0].name}</li>`);
+
+	// // Se activa cuando estan,
+	// Promise.all([repoBaseATraducir, repoMaster]).then(function(values) {
+	// 	service.diferencia(values[0], values[1], 'diff');
+
+	// });
+
+	/* 
+	 // Token
+	$.get(`https://api.github.com/user?access_token=${config.token}`, function(val){
+		console.log(val)
+	})
+	*/
+
+	// Acciones tree
+	$('#tree-menu').click(function(e) {
+		$('#tree').show();
+		$('#tree-close').show();
+
+	})
+	$('#tree-close').click(function(e) {
+		$('#tree').fadeOut();
+		$('#tree-close').fadeOut();
+	})
+
+	$('#mnu-settings').click(function(e) {
+		$('#settings').fadeIn();
+	})
+
+
+
+	// Inicia el markdown
+	var simplemde = new SimpleMDE({
+		element: $("#editor")[0],
+		spellChecker: false,
+		renderingConfig: {
+			singleLineBreaks: false,
+			codeSyntaxHighlighting: true,
+		},
+
+	});
+
 
 
 });

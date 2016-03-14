@@ -25,18 +25,43 @@
 <div id="tree-close"></div>
 
 <header id="page-header">
-	<ul>
+	<ul id="mnu-left">
 		<li id="tree-menu"><i class="fa fa-bars"></i></li>
+		<li id='header-path-file'><span></span></li>
+	</ul>
+	<ul id="mnu-right">
+		<li id="mnu-settings"><i class="fa fa-cogs"></i></li>
 	</ul>
 </header>
 
-<section id="main">
-	
+<section id="settings">
+	<form>
+		<p>
+			<label for="">Owner:</label>
+			<input type="text" value="" placeholder="wfpaisa" id="field-owner">
+		</p>
+		<p>
+			<label for="">Repo:</label>
+			<input type="text" value="" placeholder="sails-docs" id="field-repo">
+		</p>
+		<p>
+			<label for="">Branch:</label>
+			<input type="text" value="" placeholder="es-ES" id="field-branch">
+		</p>
+		<p>
+			<label for="">Token:</label>
+			<input type="text" value="" placeholder="90d2977a99d409f9fd8dc4a3bd5a65866b019f5b" id="field-token">
+			<div class="form-info">Go: <a href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></div>
+		</p>
+		<button class='btn' id="save-settings">Save</button>
+	</form>
+</section>
+
+<section id="main">	
 	<article id="edit">
 		<textarea name="editor" id="editor" contenteditable="true"></textarea>
 	</article>
 	<article id="diff"></article>
-
 </section>
 
 
