@@ -6,6 +6,9 @@ Actualmente trabajando con node.JS v5.
 
 - `bower install`
 - `npm i `
+- gulp
+
+Ir a: `http://localhost:8000/
 
 ## Configurar
 
